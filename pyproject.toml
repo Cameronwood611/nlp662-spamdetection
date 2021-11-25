@@ -1,0 +1,39 @@
+[project]
+name = "Spam Detection"
+version = "1.0.0"
+description = "A final project for NLP 662 course that detects whether or not a given email is spam."
+authors = [
+    {name = "Cameronwood611", email = "cwood611@uab.edu"},
+    {name = "Tom el Safadi", email="tsafadi@kes-soft.de"}
+]
+dependencies = [
+    "sklearn~=0.0",
+    "keras~=2.7",
+    "tensorflow~=2.3",
+]
+requires-python = ">=3.8"
+dynamic = ["classifiers"]
+license = {text = "_"}
+
+[project.urls]
+homepage = ""
+
+[build-system]
+requires = ["pdm-pep517"]
+build-backend = "pdm.pep517.api"
+
+[tool]
+[tool.pdm]
+
+[tool.pdm.dev-dependencies]
+dev = ["black", "isort~=5.9"]
+
+[tool.isort]
+length_sort = "1"
+profile = "black"
+sections="STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
+import_heading_stdlib="STL"
+import_heading_thirdparty="PDM"
+import_heading_firstparty="LOCAL"
+import_heading_localfolder="LOCAL"
+
