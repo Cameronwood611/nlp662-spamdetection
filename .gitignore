@@ -2,3 +2,11 @@
 __pycache__/
 __pypackages__/
 .pdm.toml
+
+
+# spam/ham datasets
+test-data/easy_ham
+test-data/easy_ham_2
+test-data/hard_ham
+test-data/spam
+test-data/spam_2
