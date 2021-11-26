@@ -10,6 +10,8 @@ import numpy as np
 import tensorflow as tf
 from sklearn.metrics import f1_score, recall_score, precision_score, confusion_matrix
 from sklearn.model_selection import train_test_split
+from keras.preprocessing.text import Tokenizer
+from keras.preprocessing.sequence import pad_sequences
 
 
 def all_datasets_exist() -> bool:
@@ -147,7 +149,7 @@ def preprocess_clean(data):
     Returns:
      - data (str): normalized and clean data
     """
-    
+
     data = data.replace("\n", "").lower().strip()
     data = re.sub(r"http\S+", "", data)  # no hyperlink
     data = re.sub(r'\d+', '', data) # no numbers
@@ -155,10 +157,30 @@ def preprocess_clean(data):
     return data
 
 
+def build_features(x_train, x_test):
+    max_feature = 50000  # how many unique words
+    max_len = 2000 # max number of words
+
+    tokenizer = Tokenizer(num_words=max_feature)
+
+    tokenizer.fit_on_texts(x_train)
+    x_train_features = np.array(tokenizer.texts_to_sequences(x_train), dtype=object)
+    x_test_features = np.array(tokenizer.texts_to_sequences(x_test), dtype=object)
+
+    x_train_features = pad_sequences(x_train_features,maxlen=max_len)
+    x_test_features = pad_sequences(x_test_features,maxlen=max_len)
+
+    return x_train_features, x_test_features
+
+
 def main():
     x_train, y_train, x_test, y_test = prepare_datasets()
     x_train = [preprocess_clean(o) for o in x_train]
     x_test = [preprocess_clean(o) for o in x_test]
+
+    x_train_features, x_test_features = build_features(x_train, x_test)
+
+    print(x_train)
 
 
 
