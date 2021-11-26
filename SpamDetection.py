@@ -3,6 +3,7 @@ import os
 import re
 import glob
 import email
+import string
 
 # PDM
 import numpy as np
@@ -133,9 +134,32 @@ def prepare_datasets():
     x_train, y_train = remove_null(x_train, y_train)
     x_test, y_test = remove_null(x_test, y_test)
 
+    return x_train, y_train, x_test, y_test
+
+def preprocess_clean(data):
+    """
+    Do some preprocess cleaning with the data from emails. We want to do some
+    normalization so there is no bias for certain anomalies within the data.
+
+    Params:
+     - data (str): The raw content of an email
+
+    Returns:
+     - data (str): normalized and clean data
+    """
+    
+    data = data.replace("\n", "").lower().strip()
+    data = re.sub(r"http\S+", "", data)  # no hyperlink
+    data = re.sub(r'\d+', '', data) # no numbers
+    data = data.translate(str.maketrans(dict.fromkeys(string.punctuation)))
+    return data
+
 
 def main():
-    prepare_datasets()
+    x_train, y_train, x_test, y_test = prepare_datasets()
+    x_train = [preprocess_clean(o) for o in x_train]
+    x_test = [preprocess_clean(o) for o in x_test]
+
 
 
 main()
