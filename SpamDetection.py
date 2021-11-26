@@ -8,6 +8,8 @@ import string
 # PDM
 import numpy as np
 import tensorflow as tf
+from keras.layers import LSTM, Dense, Input, Dropout, Embedding, Bidirectional
+from keras.models import Model
 from sklearn.metrics import f1_score, recall_score, precision_score, confusion_matrix
 from sklearn.model_selection import train_test_split
 from keras.preprocessing.text import Tokenizer
@@ -38,15 +40,19 @@ def all_datasets_exist() -> bool:
     return True
 
 
-# Pull content of email
-def get_email_content(email_paths):
-    content = []
-    for path in email_paths:
-        file = open(path, encoding="latin1")
+def read_email(path):
+    file = open(path, encoding="latin1")
+    try:
         msg = email.message_from_file(file)
         for part in msg.walk():
             if part.get_content_type() == "text/plain":
-                content.append(part.get_payload())  # raw text
+                return part.get_payload()  # raw text
+    except Exception as e:
+        print(e)
+    
+
+def get_email_content(email_paths):
+    content = [read_email(path) for path in email_paths]
     return content
 
 
@@ -173,6 +179,23 @@ def build_features(x_train, x_test):
     return x_train_features, x_test_features
 
 
+def create_model():
+    # create the model
+    max_feature = 50000  # how many unique words
+    max_len = 2000 # max number of words
+    embedding_vecor_length = 32
+
+    model = tf.keras.Sequential()
+    model.add(Embedding(max_feature, embedding_vecor_length, input_length=max_len))
+    model.add(Bidirectional(LSTM(64)))
+    model.add(Dense(16, activation='relu'))
+    model.add(Dropout(0.1))
+    model.add(Dense(1, activation='sigmoid'))
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    print(model.summary())
+    return model
+
+
 def main():
     x_train, y_train, x_test, y_test = prepare_datasets()
     x_train = [preprocess_clean(o) for o in x_train]
@@ -180,8 +203,8 @@ def main():
 
     x_train_features, x_test_features = build_features(x_train, x_test)
 
-    print(x_train)
-
-
+    model = create_model()
+    history = model.fit(
+        x_train_features, y_train, batch_size=512, epochs=20, validation_data=(x_test_features, y_test))
 
 main()
