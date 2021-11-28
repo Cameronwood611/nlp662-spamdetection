@@ -185,7 +185,7 @@ def preprocess_clean(data):
     return data
 
 
-def build_features(x_train, x_test):
+def tokenize_and_pad(x_train, x_test):
     """
     Use Keras tokenizer on train and test datasets. Pad these tokens so 
     that all are the same length before turning them into vectors.
@@ -254,7 +254,7 @@ def main():
     x_train = [preprocess_clean(o) for o in x_train]
     x_test = [preprocess_clean(o) for o in x_test]
 
-    x_train_features, x_test_features = build_features(x_train, x_test)
+    x_train_features, x_test_features = tokenize_and_pad(x_train, x_test)
 
     model = create_model()
     history = model.fit(
