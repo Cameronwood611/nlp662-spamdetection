@@ -236,11 +236,12 @@ def main():
     history = model.fit(
         x_train_features, y_train, batch_size=512, epochs=20, validation_data=(x_test_features, y_test))
     
-    # Predict scores
     y_predict  = [1 if o>0.5 else 0 for o in model.predict(x_test_features)]
     
     printPlot(history)
     printConfusionMatrix(y_test, y_predict)
     printScores(y_test, y_predict)
+    
+    f1_score(y_test, y_predict)
 
 main()
