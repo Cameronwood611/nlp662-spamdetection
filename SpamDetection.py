@@ -215,5 +215,7 @@ def main():
     model = create_model()
     history = model.fit(
         x_train_features, y_train, batch_size=512, epochs=20, validation_data=(x_test_features, y_test))
+    
+    printPlot(history)
 
 main()
