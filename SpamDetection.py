@@ -195,6 +195,15 @@ def create_model():
     print(model.summary())
     return model
 
+def printPlot(history):
+    plt.plot(history.history['accuracy'])
+    plt.plot(history.history['val_accuracy'])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    plt.grid()
+    plt.show()
 
 def main():
     x_train, y_train, x_test, y_test = prepare_datasets()
