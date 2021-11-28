@@ -15,6 +15,8 @@ from sklearn.model_selection import train_test_split
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 
+from  matplotlib import pyplot as plt
+
 
 def all_datasets_exist() -> bool:
     """
