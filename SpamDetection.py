@@ -207,8 +207,7 @@ def printPlot(history):
     plt.grid()
     plt.show()
     
-def printConfusionMatrix(model, x_test_features, y_test):
-    y_predict  = [1 if o>0.5 else 0 for o in model.predict(x_test_features)]
+def printConfusionMatrix(y_test, y_predict):
     cf_matrix = confusion_matrix(y_test, y_predict)
     
     ax = plt.subplot()
@@ -219,6 +218,12 @@ def printConfusionMatrix(model, x_test_features, y_test):
     ax.set_ylabel('True labels'); 
     ax.set_title('Confusion Matrix'); 
     ax.xaxis.set_ticklabels(['Not Spam', 'Spam']); ax.yaxis.set_ticklabels(['Not Spam', 'Spam']);
+    
+def printScores(y_test, y_predict):
+    tn, fp, fn, tp = confusion_matrix(y_test,y_predict).ravel()
+    print("Precision: {:.2f}%".format(100 * precision_score(y_test, y_predict)))
+    print("Recall: {:.2f}%".format(100 * recall_score(y_test, y_predict)))
+    print("F1 Score: {:.2f}%".format(100 * f1_score(y_test,y_predict)))
 
 def main():
     x_train, y_train, x_test, y_test = prepare_datasets()
@@ -231,8 +236,11 @@ def main():
     history = model.fit(
         x_train_features, y_train, batch_size=512, epochs=20, validation_data=(x_test_features, y_test))
     
+    # Predict scores
+    y_predict  = [1 if o>0.5 else 0 for o in model.predict(x_test_features)]
+    
     printPlot(history)
-    printConfusionMatrix(model, x_test_features, y_test)
-   
+    printConfusionMatrix(y_test, y_predict)
+    printScores(y_test, y_predict)
 
 main()
