@@ -16,7 +16,7 @@ from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 
 from  matplotlib import pyplot as plt
-
+import seaborn as sns
 
 def all_datasets_exist() -> bool:
     """
@@ -206,6 +206,19 @@ def printPlot(history):
     plt.legend(['train', 'test'], loc='upper left')
     plt.grid()
     plt.show()
+    
+def printConfusionMatrix(model, x_test_features, y_test):
+    y_predict  = [1 if o>0.5 else 0 for o in model.predict(x_test_features)]
+    cf_matrix = confusion_matrix(y_test, y_predict)
+    
+    ax = plt.subplot()
+    sns.heatmap(cf_matrix, annot=True, ax = ax,cmap='Blues',fmt=''); #annot=True to annotate cells
+
+    # labels, title and ticks
+    ax.set_xlabel('Predicted labels');
+    ax.set_ylabel('True labels'); 
+    ax.set_title('Confusion Matrix'); 
+    ax.xaxis.set_ticklabels(['Not Spam', 'Spam']); ax.yaxis.set_ticklabels(['Not Spam', 'Spam']);
 
 def main():
     x_train, y_train, x_test, y_test = prepare_datasets()
@@ -219,5 +232,7 @@ def main():
         x_train_features, y_train, batch_size=512, epochs=20, validation_data=(x_test_features, y_test))
     
     printPlot(history)
+    printConfusionMatrix(model, x_test_features, y_test)
+   
 
 main()
