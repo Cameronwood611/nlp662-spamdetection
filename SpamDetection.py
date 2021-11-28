@@ -7,16 +7,16 @@ import string
 
 # PDM
 import numpy as np
+import seaborn as sns
 import tensorflow as tf
-from keras.layers import LSTM, Dense, Input, Dropout, Embedding, Bidirectional
+from matplotlib import pyplot as plt
+from keras.layers import LSTM, Dense, Dropout, Embedding, Bidirectional
 from keras.models import Model
 from sklearn.metrics import f1_score, recall_score, precision_score, confusion_matrix
 from sklearn.model_selection import train_test_split
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 
-from  matplotlib import pyplot as plt
-import seaborn as sns
 
 def all_datasets_exist() -> bool:
     """
@@ -43,6 +43,16 @@ def all_datasets_exist() -> bool:
 
 
 def read_email(path):
+    """
+    Raed the raw content from an email.
+
+    Params:
+     - path (str): the file path for the email to read.
+    
+    Returns:
+     - content (str): raw content of an email.
+    """
+
     file = open(path, encoding="latin1")
     try:
         msg = email.message_from_file(file)
@@ -54,6 +64,16 @@ def read_email(path):
     
 
 def get_email_content(email_paths):
+    """
+    Wrapper for aggregating email content on all files.
+
+    Params:
+     - email_paths (list): list of email paths to read.
+
+    Returns:
+     - content (list): list of email content. 
+    """
+
     content = [read_email(path) for path in email_paths]
     return content
 
@@ -166,6 +186,10 @@ def preprocess_clean(data):
 
 
 def build_features(x_train, x_test):
+    """
+    Use Keras tokenizer on train and test datasets. Pad these tokens so 
+    that all are the same length before turning them into vectors.
+    """
     max_feature = 50000  # how many unique words
     max_len = 2000 # max number of words
 
@@ -182,7 +206,7 @@ def build_features(x_train, x_test):
 
 
 def create_model():
-    # create the model
+   
     max_feature = 50000  # how many unique words
     max_len = 2000 # max number of words
     embedding_vecor_length = 32
