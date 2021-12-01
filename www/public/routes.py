@@ -29,7 +29,6 @@ def read_email(file):
     msg = BytesParser(policy=default).parse(file)
     for part in msg.walk():
             if part.get_content_type() == "text/plain":
-                print(part.get_payload())
                 return part.get_payload()  # raw text
         
 
@@ -68,17 +67,19 @@ def predict():
     for _f in files:
         data = read_email(_f)
         data = clean_data(data)
-        print(data)
+        print(f"{data}\n\n")
         x_predict = [data]
-        tokenizer = keras.preprocessing.text.Tokenizer(num_words=vocab_size)
+        tokenizer = keras.preprocessing.text.Tokenizer()
         tokenizer.fit_on_texts(x_predict)
 
         new_features = keras.preprocessing.sequence.pad_sequences(
             np.array(tokenizer.texts_to_sequences(x_predict), dtype=object),  # basically one-hot-encoding
             maxlen=max_words
         )
-        prediction = m.predict(new_features)[0][0]
-        results[_f.filename] = prediction * 100
+        prediction = m.predict(new_features)[0][0] * 100
+        print(prediction)
+        res = "Spam" if prediction >= 1 else "Ham"
+        results[_f.filename] = res
 
     return dumps(results)
 

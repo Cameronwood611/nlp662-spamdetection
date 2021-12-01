@@ -35,6 +35,7 @@ class UploadFiles extends Component {
         return res.json();
       })
       .then((data) => {
+        console.log(data);
         this.setState({
           loading: false,
           successMsg: successMsg ? successMsg : "Success!",
